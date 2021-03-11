@@ -1,4 +1,6 @@
 import hashlib as hl
+import os
+from typing import Optional
 
 
 class Hashes:
@@ -7,7 +9,13 @@ class Hashes:
         pass
 
     @staticmethod
-    def hashUsingAllAvailableAlgorithms(text: str, encode: bool = True) -> list:
+    def hashUsingAllAvailableAlgorithms(text: str, encode: bool = True) -> dict:
+        """
+        Method hashing given text (or bytesarray) using all available algorithms
+        :param text: str
+        :param encode: bool
+        :return: dict
+        """
 
         if len(text) == 0:
             return {}
@@ -28,15 +36,24 @@ class Hashes:
         return hashesOfText
 
     @staticmethod
-    def hashFileFromDisk(path: str):
+    def hashFileFromDisk(path: str) -> Optional[str]:
+        """
+        Method returning hash of file in given path
+        None is return when no file in given path
+        :param path: str
+        :return: str|None
+        """
 
         sha256 = hl.sha256()
 
-        with open(path, 'rb') as file:
-            while True:
-                data = file.read(65536)
-                if not data:
-                    break
-                sha256.update(data)
+        if os.path.exists(path):
+            with open(path, 'rb') as file:
+                while True:
+                    data = file.read(65536)
+                    if not data:
+                        break
+                    sha256.update(data)
 
-        return sha256.hexdigest()
+            return sha256.hexdigest()
+
+        return None
